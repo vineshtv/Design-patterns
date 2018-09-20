@@ -12,7 +12,7 @@ class SuperHero
 {
 public:
     //Super hero factory method
-    static SuperHero *spawn(int choice);
+    static std::unique_ptr<SuperHero> spawn(int choice);
     virtual void who() = 0;
 };
 
@@ -43,26 +43,25 @@ public:
     }
 };
 
-SuperHero *SuperHero::spawn(int choice)
+std::unique_ptr<SuperHero> SuperHero::spawn(int choice)
 {
     if (choice == superman){
-        return new Superman;
+        return std::make_unique<Superman>();
     } else if (choice == batman){
-        return new Batman;
+        return std::make_unique<Batman>();
     } else {
-        return new Ironman; 
+        return std::make_unique<Ironman>();
     }
 }
 
 int main()
 {
-    vector<SuperHero*> heros;
-
-    heros.push_back(SuperHero::spawn(superman));
-    heros.push_back(SuperHero::spawn(batman));
-    heros.push_back(SuperHero::spawn(ironman));
-
-    for(SuperHero* hero : heros)
+    vector<std::unique_ptr<SuperHero>> heros;
+    heros.push_back(std::move(SuperHero::spawn(superman)));
+    heros.push_back(std::move(SuperHero::spawn(batman)));
+    heros.push_back(std::move(SuperHero::spawn(ironman)));
+    
+    for (auto& hero: heros)
     {
         hero->who();
     }
